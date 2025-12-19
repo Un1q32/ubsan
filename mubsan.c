@@ -1,6 +1,13 @@
 #include <stdint.h>
+#include <stdio.h>
+#include <stdarg.h>
 
-extern int mubsan_log(const char* format, ...);
+static void mubsan_log(const char *format, ...) {
+    va_list ap;
+    va_start(ap, format);
+    vfprintf(stderr, format, ap);
+    va_end(ap);
+}
 
 const char* const mubsan_type_check_kinds[] = {
     "load of",
@@ -193,4 +200,10 @@ void __ubsan_handle_function_type_mismatch(mubsan_function_type_mismatch* data, 
                data->loc.col,
                data->type->name,
                function);
+}
+void __ubsan_handle_float_cast_overflow(void) {
+    mubsan_log("mubsan @ uhh theres a fuckin float cast overflow somewhere idk\n");
+}
+void __ubsan_handle_invalid_builtin(void) {
+    mubsan_log("mubsan @ uhh theres a fuckin invalid builtin somewhere idk\n");
 }
