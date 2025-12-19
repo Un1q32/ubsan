@@ -82,6 +82,11 @@ typedef struct {
   ubsan_type_description *type;
 } ubsan_function_type_mismatch;
 
+typedef struct {
+  ubsan_source_location loc;
+  unsigned char kind;
+} ubsan_invalid_builtin;
+
 void __ubsan_handle_type_mismatch_v1(ubsan_type_mismatch_info_v1 *data,
                                      uintptr_t ptr) {
   const char *reason = "type mismatch";
@@ -183,10 +188,11 @@ void __ubsan_handle_function_type_mismatch(ubsan_function_type_mismatch *data,
             function);
 }
 
-void __ubsan_handle_float_cast_overflow(void) {
-  ubsan_log("ubsan @ uhh theres a fuckin float cast overflow somewhere idk\n");
+void __ubsan_handle_invalid_builtin(ubsan_invalid_builtin *data) {
+  ubsan_log("ubsan @ %s:%u:%u: invalid builtin\n", data->loc.file,
+            data->loc.line, data->loc.col);
 }
 
-void __ubsan_handle_invalid_builtin(void) {
-  ubsan_log("ubsan @ uhh theres a fuckin invalid builtin somewhere idk\n");
+void __ubsan_handle_float_cast_overflow(void) {
+  ubsan_log("ubsan @ uhh theres a fuckin float cast overflow somewhere idk\n");
 }
