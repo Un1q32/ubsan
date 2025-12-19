@@ -194,8 +194,14 @@ void __ubsan_handle_function_type_mismatch(ubsan_function_type_mismatch *data,
 }
 
 void __ubsan_handle_invalid_builtin(ubsan_invalid_builtin *data) {
-  ubsan_log("ubsan @ %s:%u:%u: invalid builtin\n", data->loc.file,
-            data->loc.line, data->loc.col);
+  if (data->kind == 2)
+    ubsan_log("ubsan @ %s:%u:%u: assumption is violated during execution\n",
+              data->loc.file, data->loc.line, data->loc.col);
+  else
+    ubsan_log("ubsan @ %s:%u:%u: passing zero to __builtin_%s(), which is not "
+              "a valid argument\n",
+              data->loc.file, data->loc.line, data->loc.col,
+              (data->kind == 0) ? "ctz" : "clz");
 }
 
 void __ubsan_handle_float_cast_overflow(ubsan_float_cast_overflow *data,
