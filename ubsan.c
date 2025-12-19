@@ -87,6 +87,12 @@ typedef struct {
   unsigned char kind;
 } ubsan_invalid_builtin;
 
+typedef struct {
+  ubsan_source_location loc;
+  ubsan_type_description *from;
+  ubsan_type_description *to;
+} ubsan_float_cast_overflow;
+
 void __ubsan_handle_type_mismatch_v1(ubsan_type_mismatch_info_v1 *data,
                                      uintptr_t ptr) {
   const char *reason = "type mismatch";
@@ -192,6 +198,10 @@ void __ubsan_handle_invalid_builtin(ubsan_invalid_builtin *data) {
             data->loc.line, data->loc.col);
 }
 
-void __ubsan_handle_float_cast_overflow(void) {
-  ubsan_log("ubsan @ uhh theres a fuckin float cast overflow somewhere idk\n");
+void __ubsan_handle_float_cast_overflow(ubsan_float_cast_overflow *data,
+                                        float value) {
+  ubsan_log("ubsan @ %s:%u:%u: %g is outside the range of representable values "
+            "of type %s\n",
+            data->loc.file, data->loc.line, data->loc.col, value,
+            data->to->name);
 }
