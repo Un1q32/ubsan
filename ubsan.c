@@ -91,11 +91,10 @@ void __ubsan_handle_type_mismatch_v1(ubsan_type_mismatch_info_v1 *data,
                                      uintptr_t ptr) {
   const char *reason = "type mismatch";
 
-  if (ptr == 0) {
+  if (ptr == 0)
     reason = "dereference of a null pointer";
-  } else if (data->alignment && (ptr & (data->alignment - 1))) {
+  else if (data->alignment && (ptr & (data->alignment - 1)))
     reason = "use of a misaligned pointer";
-  }
 
   ubsan_log(
       "ubsan @ %s:%u:%u: %s, %s type %s at alignment %u at address 0x%lx\n",
