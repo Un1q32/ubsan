@@ -209,10 +209,41 @@ void __ubsan_handle_invalid_builtin(ubsan_invalid_builtin *data) {
               (data->kind == 0) ? "ctz" : "clz");
 }
 
-void __ubsan_handle_float_cast_overflow(ubsan_float_cast_overflow *data) {
-  ubsan_log("ubsan @ %s:%u:%u: overflow when casting %s to %s\n",
-            data->loc.file, data->loc.line, data->loc.col, data->from->name,
-            data->to->name);
+void __ubsan_handle_float_cast_overflow(ubsan_float_cast_overflow *data,
+                                        uintptr_t _value) {
+  long double value;
+  if (data->from->info == 16) {
+    union {
+      uint16_t i;
+      _Float16 f;
+    } un;
+    un.i = _value;
+    value = un.f;
+  } else if (data->from->info == 32) {
+    union {
+      uint32_t i;
+      float f;
+    } un;
+    un.i = _value;
+    value = un.f;
+  } else if (data->from->info == 64)
+    value = *(double *)_value;
+  /*
+  else if (data->from->info == 128)
+    value = *(_Float128 *)_value;
+  */
+  else if (data->from->info > 64)
+    value = *(long double *)_value;
+  else {
+    ubsan_log("ubsan @ %s:%u:%u: overflow when casting %s to %s\n",
+              data->loc.file, data->loc.line, data->loc.col, data->from->name,
+              data->to->name);
+    return;
+  }
+  ubsan_log(
+      "ubsan @ %s:%u:%u: %lg is outside the range of representable values "
+      "of type %s\n",
+      data->loc.file, data->loc.line, data->loc.col, value, data->to->name);
 }
 
 void __ubsan_handle_vla_bound_not_positive(ubsan_negative_vla *data) {
