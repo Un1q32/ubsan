@@ -209,11 +209,9 @@ void __ubsan_handle_invalid_builtin(ubsan_invalid_builtin *data) {
               (data->kind == 0) ? "ctz" : "clz");
 }
 
-void __ubsan_handle_float_cast_overflow(ubsan_float_cast_overflow *data,
-                                        float value) {
-  ubsan_log("ubsan @ %s:%u:%u: %g is outside the range of representable values "
-            "of type %s\n",
-            data->loc.file, data->loc.line, data->loc.col, value,
+void __ubsan_handle_float_cast_overflow(ubsan_float_cast_overflow *data) {
+  ubsan_log("ubsan @ %s:%u:%u: overflow when casting %s to %s\n",
+            data->loc.file, data->loc.line, data->loc.col, data->from->name,
             data->to->name);
 }
 
