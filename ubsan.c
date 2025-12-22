@@ -2,12 +2,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-static void ubsan_log(const char *format, ...) {
-  va_list ap;
-  va_start(ap, format);
-  vfprintf(stderr, format, ap);
-  va_end(ap);
-}
+#define ubsan_log(format, ...) fprintf(stderr, format, __VA_ARGS__)
 
 const char *const ubsan_type_check_kinds[] = {"load of",
                                               "store to",
@@ -58,8 +53,6 @@ typedef struct {
 
 typedef struct {
   ubsan_source_location loc;
-  // ubsan_source_location attr_loc;
-  // int arg_index;
 } ubsan_not_null_arg;
 
 typedef struct {
@@ -241,7 +234,7 @@ void __ubsan_handle_float_cast_overflow(ubsan_float_cast_overflow *data,
     return;
   }
   ubsan_log(
-      "ubsan @ %s:%u:%u: %lg is outside the range of representable values "
+      "ubsan @ %s:%u:%u: %Lg is outside the range of representable values "
       "of type %s\n",
       data->loc.file, data->loc.line, data->loc.col, value, data->to->name);
 }
