@@ -184,10 +184,10 @@ void __ubsan_handle_builtin_unreachable(ubsan_unreachable *data) {
 
 void __ubsan_handle_function_type_mismatch(ubsan_function_type_mismatch *data,
                                            void *function) {
-  ubsan_log("ubsan @ %s:%u:%u: function type mismatch, for type %s at address "
-            "0x%lx\n",
-            data->loc.file, data->loc.line, data->loc.col, data->type->name,
-            function);
+  ubsan_log(
+      "ubsan @ %s:%u:%u: function type mismatch, for type %s at address %p\n",
+      data->loc.file, data->loc.line, data->loc.col, data->type->name,
+      function);
 }
 
 void __ubsan_handle_invalid_builtin(ubsan_invalid_builtin *data) {
