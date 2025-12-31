@@ -101,46 +101,46 @@ void __ubsan_handle_type_mismatch_v1(ubsan_type_mismatch_info_v1 *data,
   else if (data->alignment && (ptr & (data->alignment - 1)))
     reason = "use of a misaligned pointer";
 
-  ubsan_log("%s, %s type %s at alignment %u at address 0x%lx\n", reason,
+  ubsan_log("%s, %s type %s at alignment %u at address %#zx\n", reason,
             ubsan_type_check_kinds[data->check_kind], data->type->name,
             data->alignment, ptr);
 }
 
 void __ubsan_handle_add_overflow(ubsan_overflow *data, uintptr_t lhs,
                                  uintptr_t rhs) {
-  ubsan_log("addition overflow, for type %s, expression %lu + %lu\n",
+  ubsan_log("addition overflow, for type %s, expression %zu + %zu\n",
             data->type->name, lhs, rhs);
 }
 
 void __ubsan_handle_sub_overflow(ubsan_overflow *data, uintptr_t lhs,
                                  uintptr_t rhs) {
-  ubsan_log("subtraction overflow, for type %s, expression %lu - %lu\n",
+  ubsan_log("subtraction overflow, for type %s, expression %zu - %zu\n",
             data->type->name, lhs, rhs);
 }
 
 void __ubsan_handle_mul_overflow(ubsan_overflow *data, uintptr_t lhs,
                                  uintptr_t rhs) {
-  ubsan_log("multiplication overflow, for type %s, expression %lu * %lu\n",
+  ubsan_log("multiplication overflow, for type %s, expression %zu * %zu\n",
             data->type->name, lhs, rhs);
 }
 
 void __ubsan_handle_negate_overflow(ubsan_overflow *data, uintptr_t val) {
-  ubsan_log("negate overflow, for type %s, value %lu\n", data->type->name, val);
+  ubsan_log("negate overflow, for type %s, value %zu\n", data->type->name, val);
 }
 
 void __ubsan_handle_divrem_overflow(ubsan_overflow *data, uintptr_t lhs,
                                     uintptr_t rhs) {
-  ubsan_log("divistion overflow, for type %s, expression %lu / %lu\n",
+  ubsan_log("divistion overflow, for type %s, expression %zu / %zu\n",
             data->type->name, lhs, rhs);
 }
 
-void __ubsan_handle_pointer_overflow(ubsan_pointer_overflow *data,
-                                     uintptr_t base, uintptr_t result) {
-  ubsan_log("pointer overflow, base 0x%lx, result 0x%lx\n", base, result);
+void __ubsan_handle_pointer_overflow(ubsan_pointer_overflow *data, void *base,
+                                     void *result) {
+  ubsan_log("pointer overflow, base %p, result %p\n", base, result);
 }
 
 void __ubsan_handle_out_of_bounds(ubsan_out_of_bounds *data, uintptr_t index) {
-  ubsan_log("array out of bounds, for type %s, by index type %s %lu\n",
+  ubsan_log("array out of bounds, for type %s, by index type %s %zu\n",
             data->array_type->name, data->index_type->name, index);
 }
 
@@ -150,13 +150,13 @@ void __ubsan_handle_nonnull_arg(ubsan_not_null_arg *data) {
 
 void __ubsan_handle_load_invalid_value(ubsan_invalid_value *data,
                                        uintptr_t val) {
-  ubsan_log("load of invalid value, for type %s, value %lu\n", data->type->name,
+  ubsan_log("load of invalid value, for type %s, value %zu\n", data->type->name,
             val);
 }
 
 void __ubsan_handle_shift_out_of_bounds(ubsan_shift_out_of_bounds *data,
                                         uintptr_t lhs, uintptr_t rhs) {
-  ubsan_log("shift out of bounds, of type %s and %s, value %lu and %lu\n",
+  ubsan_log("shift out of bounds, of type %s and %s, value %zu and %zu\n",
             data->lhs_type->name, data->rhs_type->name, lhs, rhs);
 }
 
