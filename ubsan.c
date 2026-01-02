@@ -1,3 +1,4 @@
+#include <float.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -197,19 +198,21 @@ void __ubsan_handle_float_cast_overflow(ubsan_float_cast_overflow *data,
     value = un.f;
   } else if (data->from->info == 64)
     value = *(double *)_value;
-  /*
-  else if (data->from->info == 128)
-    value = *(_Float128 *)_value;
-  */
-  else if (data->from->info > 64)
+  else if (data->from->info > 64
+#if LDBL_MANT_DIG != 113
+           /* This is a 128 bit float but long double is not 128 bits wide, so
+              we have no way to printf it */
+           && data->from->info != 128
+#endif
+  )
     value = *(long double *)_value;
   else {
-    ubsan_log("overflow when casting %s to %s\n", data->from->name,
+    ubsan_log("%s overflows when casting to %s\n", data->from->name,
               data->to->name);
     return;
   }
-  ubsan_log("%Lg is outside the range of representable values of type %s\n",
-            value, data->to->name);
+  ubsan_log("%s with value %Lg overflows when casting to %s\n",
+            data->from->name, value, data->to->name);
 }
 
 void __ubsan_handle_vla_bound_not_positive(ubsan_negative_vla *data) {
