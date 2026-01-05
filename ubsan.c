@@ -6,19 +6,6 @@
   fprintf(stderr, "ubsan @ %s:%u:%u: " format, data->loc.file, data->loc.line, \
           data->loc.col, ##__VA_ARGS__)
 
-const char *const ubsan_type_check_kinds[] = {"load of",
-                                              "store to",
-                                              "reference binding to",
-                                              "member access within",
-                                              "member call on",
-                                              "constructor call on",
-                                              "downcast of",
-                                              "downcast of",
-                                              "upcast of",
-                                              "cast to virtual base of",
-                                              "_Nonnull binding to",
-                                              "dynamic operation on"};
-
 typedef struct {
   const char *file;
   uint32_t line;
@@ -96,6 +83,18 @@ typedef struct {
 void __ubsan_handle_type_mismatch_v1(ubsan_type_mismatch_info_v1 *data,
                                      uintptr_t ptr) {
   const char *reason = "type mismatch";
+  const char *const type_check_kinds[] = {"load of",
+                                          "store to",
+                                          "reference binding to",
+                                          "member access within",
+                                          "member call on",
+                                          "constructor call on",
+                                          "downcast of",
+                                          "downcast of",
+                                          "upcast of",
+                                          "cast to virtual base of",
+                                          "_Nonnull binding to",
+                                          "dynamic operation on"};
 
   if (ptr == 0)
     reason = "dereference of a null pointer";
@@ -103,7 +102,7 @@ void __ubsan_handle_type_mismatch_v1(ubsan_type_mismatch_info_v1 *data,
     reason = "use of a misaligned pointer";
 
   ubsan_log("%s, %s type %s at alignment %u at address %#zx\n", reason,
-            ubsan_type_check_kinds[data->check_kind], data->type->name,
+            type_check_kinds[data->check_kind], data->type->name,
             data->alignment, ptr);
 }
 
