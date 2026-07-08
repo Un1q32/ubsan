@@ -231,9 +231,9 @@ void __ubsan_handle_alignment_assumption(ubsan_alignment_assumption *data,
   if (offset)
     ubsan_log("assumption of %zu byte alignment (with offset of %zu byte) for "
               "pointer of type %s failed\n",
-              align, offset, data->type->type_name);
+              align, offset, data->type->name);
   else
     ubsan_log(
         "assumption of %zu byte alignment for pointer of type %s failed\n",
-        align, data->type->type_name);
+        align, data->type->name);
 }
