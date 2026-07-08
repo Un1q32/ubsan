@@ -80,6 +80,12 @@ typedef struct {
   ubsan_type_description *type;
 } ubsan_negative_vla;
 
+typedef struct {
+  ubsan_source_location loc;
+  ubsan_source_location assumption_loc;
+  ubsan_type_description *type;
+} ubsan_alignment_assumption;
+
 void __ubsan_handle_type_mismatch_v1(ubsan_type_mismatch_info_v1 *data,
                                      uintptr_t ptr) {
   const char *reason = "type mismatch";
@@ -216,4 +222,18 @@ void __ubsan_handle_float_cast_overflow(ubsan_float_cast_overflow *data,
 
 void __ubsan_handle_vla_bound_not_positive(ubsan_negative_vla *data) {
   ubsan_log("variable length array bound evaluates to negative value\n");
+}
+
+void __ubsan_handle_alignment_assumption(ubsan_alignment_assumption *data,
+                                         void *ptr, uintptr_t align,
+                                         uintptr_t offset) {
+  (void)ptr;
+  if (offset)
+    ubsan_log("assumption of %zu byte alignment (with offset of %zu byte) for "
+              "pointer of type %s failed\n",
+              align, offset, data->type->type_name);
+  else
+    ubsan_log(
+        "assumption of %zu byte alignment for pointer of type %s failed\n",
+        align, data->type->type_name);
 }
